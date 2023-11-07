@@ -3,21 +3,25 @@ import type { Express, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import cors from "cors";
 
-const app:Express = express();
+const app: Express = express();
 const PORT = 8080;
 
+//ミドルウェアでjson形式を認識させる
 app.use(express.json());
+
 //corsエラーの回避
 app.use(cors());
+
+//インスタンス化
 const prisma = new PrismaClient();
 
-// 全てのtodoListを取得するAPI
+// 全てのtodoListを取得するAPIを作成(getメソッドであればブラウザで確認可能、putやdeleteは確認不可能)
 app.get("/allTodos", async (req: Request, res: Response) => {
   const allTodos = await prisma.todo.findMany();
   return res.json(allTodos);
 });
 
-//create
+//createのAPIを作成
 app.post("/createTodo", async (req: Request, res: Response) => {
   try {
     const { title, isCompleted } = req.body;
@@ -29,16 +33,16 @@ app.post("/createTodo", async (req: Request, res: Response) => {
     });
     return res.json(createTodo);
   } catch (e) {
-    console.log(e);
     return res.status(400).json(e);
   }
 });
 
-//edit(update)
+//edit(update)のAPIを作成
 app.put("/editTodo/:id", async (req: Request, res: Response) => {
   try {
     //Number型にキャスト
     const id = Number(req.params.id);
+    
     const { title, isCompleted } = req.body;
     const editTodo = await prisma.todo.update({
       where: { id },
@@ -49,23 +53,20 @@ app.put("/editTodo/:id", async (req: Request, res: Response) => {
     });
     return res.json(editTodo);
   } catch (e) {
-    console.log(e);
     return res.status(400).json(e);
   }
 });
 
-//delete
+//deleteのAPIを作成
 app.delete("/deleteTodo/:id", async (req: Request, res: Response) => {
   try {
     //Number型にキャスト
     const id = Number(req.params.id);
-    const { title, isCompleted } = req.body;
     const deleteTodo = await prisma.todo.delete({
       where: { id },
     });
     return res.json(deleteTodo);
   } catch (e) {
-    console.log(e);
     return res.status(400).json(e);
   }
 });
