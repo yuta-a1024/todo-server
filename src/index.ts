@@ -15,7 +15,7 @@ app.use(cors());
 //インスタンス化
 const prisma = new PrismaClient();
 
-// 全てのtodoListを取得するAPIを作成(getメソッドであればブラウザで確認可能、putやdeleteは確認不可能)
+// 全てのtodoを取得するAPIを作成(getメソッドはブラウザで確認可能、putやdeleteは確認不可)
 app.get("/allTodos", async (req: Request, res: Response) => {
   const allTodos = await prisma.todo.findMany();
   return res.json(allTodos);
@@ -23,6 +23,7 @@ app.get("/allTodos", async (req: Request, res: Response) => {
 
 //createのAPIを作成
 app.post("/createTodo", async (req: Request, res: Response) => {
+  // console.log(req.body);
   try {
     const { title, isCompleted } = req.body;
     const createTodo = await prisma.todo.create({
@@ -71,4 +72,4 @@ app.delete("/deleteTodo/:id", async (req: Request, res: Response) => {
   }
 });
 
-app.listen(PORT, () => console.log("server is running🚀"));
+app.listen(PORT, () => console.log("🚀server is running🚀"));
